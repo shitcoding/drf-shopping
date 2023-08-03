@@ -2,7 +2,6 @@ import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIClient
 
 from shopping_list.models import ShoppingItem, ShoppingList
 
@@ -253,3 +252,24 @@ def test_admin_can_retrieve_shopping_list(
     response = admin_client.get(url, format="json")
 
     assert response.status_code == status.HTTP_200_OK
+
+
+@pytest.mark.django_db
+def test_client_retrieves_only_lists_they_are_member_of(
+    create_user,
+    create_authenticated_client,
+    create_shopping_list,
+):
+    user = create_user()
+    shopping_list = ShoppingList.objects.create(name="Books")
+    shopping_list.members.add(user)
+
+    user2 = User.objects.create_user("User2", "user2@kekek.kek", "kekek")
+    create_shopping_list(user2)
+
+    client = create_authenticated_client(user)
+    url = reverse("all_shopping_lists")
+    response = client.get(url)
+
+    assert len(response.data) == 1
+    assert response.data[0]["name"] == "Books"

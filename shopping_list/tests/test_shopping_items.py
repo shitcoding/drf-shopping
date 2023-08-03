@@ -3,14 +3,13 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from rest_framework import status
 
-from shopping_list.models import ShoppingItem, ShoppingList
+from shopping_list.models import ShoppingItem
 
 
 @pytest.mark.django_db
 def test_valid_shopping_item_is_created(
     create_user,
     create_authenticated_client,
-    create_shopping_item,
     create_shopping_list,
 ):
     user = create_user()
@@ -30,7 +29,6 @@ def test_valid_shopping_item_is_created(
 def test_create_shopping_item_missing_data_returns_bad_request(
     create_user,
     create_authenticated_client,
-    create_shopping_item,
     create_shopping_list,
 ):
     user = create_user()
