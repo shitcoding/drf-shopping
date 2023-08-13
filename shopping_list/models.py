@@ -9,6 +9,7 @@ class ShoppingList(models.Model):
     members = models.ManyToManyField(
         "auth.User", related_name="shopping_lists"
     )
+    last_interaction = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name

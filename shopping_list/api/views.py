@@ -1,5 +1,6 @@
 from rest_framework import generics
 
+from shopping_list.api.pagination import LargeResultsSetPagination
 from shopping_list.api.permissions import (
     AllShoppingItemsShoppingListMembersOnly,
     ShoppingItemShoppingListMemberOnly, ShoppingListMembersOnly)
@@ -16,7 +17,9 @@ class ListAddShoppingList(generics.ListCreateAPIView):
         return serializer.save(members=[self.request.user])
 
     def get_queryset(self):
-        return ShoppingList.objects.filter(members=self.request.user)
+        return ShoppingList.objects.filter(members=self.request.user).order_by(
+            "-last_interaction"
+        )
 
 
 class ShoppingListDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -25,10 +28,18 @@ class ShoppingListDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [ShoppingListMembersOnly]
 
 
-class AddShoppingItem(generics.CreateAPIView):
-    queryset = ShoppingItem.objects.all()
+class ListAddShoppingItem(generics.ListCreateAPIView):
     serializer_class = ShoppingItemSerializer
     permission_classes = [AllShoppingItemsShoppingListMembersOnly]
+    pagination_class = LargeResultsSetPagination
+
+    def get_queryset(self):
+        shopping_list = self.kwargs["pk"]
+        queryset = ShoppingItem.objects.filter(
+            shopping_list=shopping_list
+        ).order_by("purchased")
+
+        return queryset
 
 
 class ShoppingItemDetail(generics.RetrieveUpdateDestroyAPIView):

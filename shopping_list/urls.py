@@ -1,6 +1,6 @@
 from django.urls import include, path
 
-from shopping_list.api.views import (AddShoppingItem, ListAddShoppingList,
+from shopping_list.api.views import (ListAddShoppingItem, ListAddShoppingList,
                                      ShoppingItemDetail, ShoppingListDetail)
 
 urlpatterns = [
@@ -19,8 +19,8 @@ urlpatterns = [
     ),
     path(
         "api/shopping-lists/<uuid:pk>/shopping-items/",
-        AddShoppingItem.as_view(),
-        name="add_shopping_item",
+        ListAddShoppingItem.as_view(),
+        name="list_add_shopping_item",
     ),
     path(
         "api/shopping-lists/<uuid:pk>/shopping-items/<uuid:item_pk>/",
