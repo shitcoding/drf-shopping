@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from unittest import mock
 
 import pytest
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 
 from shopping_list.models import ShoppingItem, ShoppingList
@@ -287,8 +288,8 @@ def test_correct_order_of_shopping_lists(
     user = create_user()
     client = create_authenticated_client(user)
 
-    old_time = datetime.now() - timedelta(days=1)
-    older_time = datetime.now() - timedelta(days=100)
+    old_time = timezone.now() - timedelta(days=1)
+    older_time = timezone.now() - timedelta(days=100)
 
     with mock.patch("django.utils.timezone.now") as mock_now:
         mock_now.return_value = old_time
@@ -314,8 +315,8 @@ def test_lists_order_changed_when_item_marked_purchased(
     user = create_user()
     client = create_authenticated_client(user)
 
-    recent_time = datetime.now() - timedelta(days=1)
-    older_time = datetime.now() - timedelta(days=20)
+    recent_time = timezone.now() - timedelta(days=1)
+    older_time = timezone.now() - timedelta(days=20)
 
     with mock.patch("django.utils.timezone.now") as mock_now:
         mock_now.return_value = older_time
@@ -328,7 +329,7 @@ def test_lists_order_changed_when_item_marked_purchased(
         mock_now.return_value = recent_time
         ShoppingList.objects.create(
             name="Recent",
-            last_interaction=datetime.now() - timedelta(days=100),
+            last_interaction=timezone.now() - timedelta(days=100),
         ).members.add(user)
 
         shopping_item_url = reverse(
