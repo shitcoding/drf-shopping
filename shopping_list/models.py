@@ -1,5 +1,7 @@
 import uuid
 
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
@@ -7,7 +9,7 @@ class ShoppingList(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=200)
     members = models.ManyToManyField(
-        "auth.User", related_name="shopping_lists"
+        settings.AUTH_USER_MODEL, related_name="shopping_lists"
     )
     last_interaction = models.DateTimeField(auto_now=True)
 
@@ -25,3 +27,7 @@ class ShoppingItem(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class User(AbstractUser):
+    pass

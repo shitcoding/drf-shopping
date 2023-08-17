@@ -1,4 +1,5 @@
 from django.urls import include, path
+from rest_framework.authtoken.views import obtain_auth_token
 
 from shopping_list.api.views import (ListAddShoppingItem, ListAddShoppingList,
                                      ShoppingItemDetail, ShoppingListDetail)
@@ -7,6 +8,7 @@ urlpatterns = [
     path(
         "api-auth/", include("rest_framework.urls", namespace="rest_framework")
     ),
+    path("api-token-auth/", obtain_auth_token, name="api_token_auth"),
     path(
         "api/shopping-lists/",
         ListAddShoppingList.as_view(),
