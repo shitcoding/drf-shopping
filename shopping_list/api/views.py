@@ -1,10 +1,14 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from shopping_list.api.pagination import LargeResultsSetPagination
 from shopping_list.api.permissions import (
     AllShoppingItemsShoppingListMembersOnly,
     ShoppingItemShoppingListMemberOnly, ShoppingListMembersOnly)
-from shopping_list.api.serializers import (ShoppingItemSerializer,
+from shopping_list.api.serializers import (AddMemberSerializer,
+                                           RemoveMemberSerializer,
+                                           ShoppingItemSerializer,
                                            ShoppingListSerializer)
 from shopping_list.models import ShoppingItem, ShoppingList
 
@@ -26,6 +30,36 @@ class ShoppingListDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = ShoppingList.objects.all()
     serializer_class = ShoppingListSerializer
     permission_classes = [ShoppingListMembersOnly]
+
+
+class ShoppingListAddMembers(APIView):
+    permission_classes = [ShoppingListMembersOnly]
+
+    def put(self, request, pk, format=None):
+        shopping_list = ShoppingList.objects.get(pk=pk)
+        serializer = AddMemberSerializer(shopping_list, data=request.data)
+        self.check_object_permissions(request, shopping_list)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ShoppingListRemoveMembers(APIView):
+    permission_classes = [ShoppingListMembersOnly]
+
+    def put(self, request, pk, format=None):
+        shopping_list = ShoppingList.objects.get(pk=pk)
+        serializer = RemoveMemberSerializer(shopping_list, data=request.data)
+        self.check_object_permissions(request, shopping_list)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListAddShoppingItem(generics.ListCreateAPIView):
