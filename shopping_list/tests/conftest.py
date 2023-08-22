@@ -6,8 +6,11 @@ from shopping_list.models import ShoppingItem, ShoppingList, User
 
 @pytest.fixture(scope="session")
 def create_shopping_item():
-    def _create_shopping_item(user, name="Test item"):
-        shopping_list = ShoppingList.objects.create(name="Test shopping list")
+    def _create_shopping_item(user, name="Test item", shopping_list=None):
+        if not shopping_list:
+            shopping_list = ShoppingList.objects.create(
+                name="Test shopping list"
+            )
         shopping_list.members.add(user)
         shopping_item = ShoppingItem.objects.create(
             name=name, purchased=False, shopping_list=shopping_list
