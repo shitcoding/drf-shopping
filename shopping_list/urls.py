@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token
 
 from shopping_list.api.views import (ListAddShoppingItem, ListAddShoppingList,
-                                     ShoppingItemDetail,
+                                     SearchShoppingItems, ShoppingItemDetail,
                                      ShoppingListAddMembers,
                                      ShoppingListDetail,
                                      ShoppingListRemoveMembers)
@@ -41,5 +41,10 @@ urlpatterns = [
         "api/shopping-lists/<uuid:pk>/shopping-items/<uuid:item_pk>/",
         ShoppingItemDetail.as_view(),
         name="shopping_item_detail",
+    ),
+    path(
+        "api/search-shopping-items/",
+        SearchShoppingItems.as_view(),
+        name="search_shopping_items",
     ),
 ]
