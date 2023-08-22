@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "shopping_list",
     "corsheaders",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -101,6 +102,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CORS Middleware settings
 CORS_ORIGIN_ALLOW_ALL = DEBUG  # Allow CORS headers only in dev mode
 
+# Custom user model
+AUTH_USER_MODEL = "shopping_list.User"
+
 # DRF settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -122,7 +126,17 @@ REST_FRAMEWORK = {
         "user_day": "10000/day",
         "user_minute": "200/minute",
     },
+    # Disable default DRF browsable API
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-# Custom user model
-AUTH_USER_MODEL = "shopping_list.User"
+# drf-spectacular settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Shopping lists API",
+    "DESCRIPTION": "Multiple shopping lists: Never forget anything anymore!",
+    "VERSION": "1.0.0",
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAuthenticated"],
+}
